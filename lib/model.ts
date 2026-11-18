@@ -175,7 +175,14 @@ export interface RadarRow {
   growth_multiplier: number;
   maturity_multiplier: number;
   chain_multiplier: number;
+  /** The farm plan's steps, as board.json writes them. */
+  farm_steps: string[];
+  /** The three traded tokens closest in TVL: [name, symbol, tvl_usd, mcap_usd]. */
+  cmp: Array<[string, string | null, number, number]>;
 }
+
+/** One category's board footprint: [name, multiple, board rows, with token, total, ever %, premium]. */
+export type CatStat = [string, number, number, number, number, number | null, number | null];
 
 /** A live-token protocol: it already trades, so the board shows the market's own value, not a model's. */
 export interface LiveRow {
@@ -195,6 +202,8 @@ export interface ValidationRow {
   variant: string;
   /** Median |ln(pred/mcap)| on held-out folds: the typical factor the prediction is off by. */
   loo_miss: number;
+  /** True leave-one-out median |ln(pred/mcap)|: each token scored by a fit that never saw it. */
+  loo: number;
   /** Share of held-out predictions within 3x of the traded market cap, 0..100. */
   within_3x: number;
   /** Spearman rank correlation of held-out predictions against market cap. */
@@ -212,6 +221,14 @@ export interface Validation {
   /** exp(q10) and exp(q90) of the shipped model's out-of-fold log residuals: the band factors. */
   band_lo: number;
   band_hi: number;
+  /** The shipped model on the newest 30% of listings: share within 3x, in P25–P75, in P10–P90. */
+  cov3: number;
+  cov2575: number;
+  cov1090: number;
+  /** The shipped model's own median |ln| miss on the traded tokens. */
+  ship_miss: number;
+  /** Fitted category premium: exp of each category's shrunk median residual, 0 when unpriced. */
+  cat_prem: Record<string, number>;
   /** The log-log curve fitted on all traded tokens: ln(mcap) = curve_a + curve_b * ln(tvl). */
   curve_a: number;
   curve_b: number;
@@ -242,6 +259,12 @@ export interface RadarData {
   rows: RadarRow[];
   live: LiveRow[];
   hot: HotSource;
+  /** Every snapshot protocol in one bucket: ranked, with token, bridge, liquid staking, exchange, versioned, wrapped. */
+  acct: [number, number, number, number, number, number, number];
+  /** The ten newest pre-token protocols in the whole snapshot, newest first. */
+  launchpad: RadarRow[];
+  /** One row per category with board rows: see CatStat. */
+  catstats: CatStat[];
 }
 
 /** Why the snapshot is not one this model can score. */
@@ -373,7 +396,7 @@ export function buildBoard(snapshot: Snapshot, model: ModelConstants = MODEL, va
         chain_multiplier: round4(s.chainMult),
         age_days: s.age,
       },
-      farm_steps: farmSteps(s.p, s.age).map(stepText),
+      farm_steps: farmSteps(s.p, s.age, snapshot.as_of).map(stepText),
     };
   });
 }
@@ -446,13 +469,20 @@ function weeklyFor(p: SnapshotProtocol, chain: string): string {
   return `Make one qualifying action on ${name}, such as a deposit, a swap or a vote.`;
 }
 
+/** Twelve weeks after the snapshot, in ISO form: the farm plan's review date. */
+function reviewDate(asOf: string): string {
+  return new Date(Date.parse(`${asOf}T00:00:00Z`) + 84 * DAY_MS).toISOString().slice(0, 10);
+}
+
 /**
- * A protocol's farm plan: six steps, each an action with a cost and a time. The plan is derived from
+ * A protocol's farm plan: eight steps, each an action with a cost and a time. The plan is derived from
  * the protocol's own record (category, chains, TVL, age), never from a hand-written list of names.
  * A protocol on more than one chain gets a step to repeat the position on its second chain, so the
- * activity is visible where the protocol actually runs.
+ * activity is visible where the protocol actually runs. The last two steps are the plan's review
+ * date and its exit rule: TVL under 70% of the snapshot figure, withdrawals paused, or a token
+ * announced.
  */
-export function farmSteps(p: SnapshotProtocol, age: number | null): FarmStep[] {
+export function farmSteps(p: SnapshotProtocol, age: number | null, asOf: string): FarmStep[] {
   const chain = chainOf(p);
   const name = p.name;
   const capital = capitalFor(p);
@@ -488,6 +518,16 @@ export function farmSteps(p: SnapshotProtocol, age: number | null): FarmStep[] {
       text: `Write the wallet, the dates and every transaction in a farm log so you can repeat the position or unwind it.`,
       cost: 'nothing but the log',
       time: '5 minutes',
+    },
+    {
+      text: `Review the position on ${reviewDate(asOf)} and renew it in 12-week blocks while the launch is still expected.`,
+      cost: 'nothing to review',
+      time: '30 minutes at each review',
+    },
+    {
+      text: `Exit if the TVL falls below ${fmtShort(Math.round(p.tvl_usd * 0.7))} — 70% of the snapshot TVL — or if withdrawals pause or a token is announced.`,
+      cost: 'about $2 of gas to unwind',
+      time: '10 minutes',
     },
   ];
   return steps;
@@ -607,6 +647,15 @@ export function validateModel(snapshot: Snapshot): Validation {
   const dated = [...traded].filter((p) => p.listed_at !== null).sort((a, b) => (a.listed_at! < b.listed_at! ? -1 : 1));
   const cut = Math.floor(dated.length * 0.7);
   const wfTrain = dated.slice(0, cut), wfTest = dated.slice(cut);
+  // True leave-one-out: every traded token scored by a fit that never saw it, per variant.
+  const looMiss: number[] = VALIDATION_VARIANTS.map((_variant, v) => {
+    const miss: number[] = [];
+    for (const p of traded) {
+      const fit = fitVariant(traded.filter((q) => q !== p));
+      miss.push(Math.abs(Math.log(variantPred(p, fit, v, snapshot.as_of) / p.mcap_usd!)));
+    }
+    return Math.round(medianOf(miss) * 100) / 100;
+  });
   const rows: ValidationRow[] = VALIDATION_VARIANTS.map((variant, v) => {
     const miss: number[] = [];
     const within: number[] = [];
@@ -630,6 +679,7 @@ export function validateModel(snapshot: Snapshot): Validation {
     return {
       variant,
       loo_miss: Math.round(medianOf(miss) * 100) / 100,
+      loo: looMiss[v]!,
       within_3x: Math.round((within.reduce((a, b) => a + b, 0) / Math.max(1, within.length)) * 100),
       rank_rho: Math.round(spearman(px, py) * 100) / 100,
       walk_forward: Math.round(wf * 100) / 100,
@@ -649,14 +699,29 @@ export function validateModel(snapshot: Snapshot): Validation {
   const resSorted = [...residuals].sort((a, b) => a - b);
   const bandLo = round3(Math.exp(quantileOf(resSorted, 0.1)));
   const bandHi = round3(Math.exp(quantileOf(resSorted, 0.9)));
+  const shipMiss = Math.round(medianOf(residuals.map((r) => Math.abs(r))) * 100) / 100;
+  // Coverage of the shipped model on the newest 30% of listings, against the bands the five-fold
+  // test states: a band that holds is one the newest tokens land inside at the stated rate.
+  const q25 = quantileOf(resSorted, 0.25), q75 = quantileOf(resSorted, 0.75);
+  const q10 = quantileOf(resSorted, 0.1), q90 = quantileOf(resSorted, 0.9);
+  const wfRes = wfTest.map((p) => Math.log(impliedValue(p, snapshot.as_of, MODEL).implied / p.mcap_usd!));
+  const shareIn = (lo: number, hi: number): number => Math.round((wfRes.filter((r) => r >= lo && r <= hi).length / Math.max(1, wfRes.length)) * 100);
+  const cov3 = Math.round((wfRes.filter((r) => Math.abs(r) <= Math.log(3)).length / Math.max(1, wfRes.length)) * 100);
   // The chart: the curve fitted on all traded tokens, its P25–P75 residual band, and both point sets.
   const fit = fitVariant(traded);
   const curveRes = traded.map((p) => Math.log(p.mcap_usd!) - (fit.a + fit.b * Math.log(p.tvl_usd))).sort((a, b) => a - b);
+  const catPrem: Record<string, number> = {};
+  for (const c of Object.keys(fit.cat)) catPrem[c] = Math.round(Math.exp(fit.cat[c]!) * 100) / 100;
   return {
     traded: traded.length,
     rows,
     band_lo: bandLo,
     band_hi: bandHi,
+    cov3,
+    cov2575: shareIn(q25, q75),
+    cov1090: shareIn(q10, q90),
+    ship_miss: shipMiss,
+    cat_prem: catPrem,
     curve_a: round3(fit.a),
     curve_b: round3(fit.b),
     band_p25: Math.round(quantileOf(curveRes, 0.25) * 100) / 100,
@@ -688,7 +753,7 @@ export function verdictFor(implied: number, bandLo: number, growth: number | nul
   return { verdict: 'marginal', why: `P10 ${fmtShort(p10)} — worth a look, not a priority.` };
 }
 
-/** A board row's compact form for data.js, with the farm plan generated in the page. */
+/** A board row's compact form for data.js, with its farm plan; comparables attach in buildRadar. */
 export function radarRow(row: BoardRow): RadarRow {
   return {
     rank: row.rank,
@@ -711,7 +776,103 @@ export function radarRow(row: BoardRow): RadarRow {
     growth_multiplier: row.model.growth_multiplier,
     maturity_multiplier: row.model.maturity_multiplier,
     chain_multiplier: row.model.chain_multiplier,
+    farm_steps: row.farm_steps,
+    cmp: [],
   };
+}
+
+/** Every snapshot protocol in one bucket: ranked, or set aside for one reason. */
+export function accounting(snapshot: Snapshot): [number, number, number, number, number, number, number] {
+  const counts: [number, number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0, 0];
+  for (const p of snapshot.protocols) {
+    if (isRankable(p)) counts[0]++;
+    else if (!isPreToken(p)) counts[1]++;
+    else if (p.category === 'Bridge' || p.category === 'Canonical Bridge') counts[2]++;
+    else if (p.category === 'Liquid Staking' || p.category === 'Liquid Restaking' || p.category === 'Restaked BTC') counts[3]++;
+    else if (p.category === 'CEX' || EXCHANGES.some((e) => p.name.startsWith(e))) counts[4]++;
+    else if (VERSIONED.test(p.name)) counts[5]++;
+    else if (WRAPPED_WORD.test(p.name)) counts[6]++;
+    else counts[6]++; // unreachable: the rule's exclusions are exactly these buckets
+  }
+  return counts;
+}
+
+/** The ten newest pre-token protocols in the whole snapshot, by listing date. */
+export function newestPreToken(snapshot: Snapshot): SnapshotProtocol[] {
+  return snapshot.protocols
+    .filter((p) => isPreToken(p) && p.listed_at !== null)
+    .sort((a, b) => (a.listed_at! < b.listed_at! ? 1 : a.listed_at! > b.listed_at! ? -1 : a.slug < b.slug ? -1 : 1))
+    .slice(0, 10);
+}
+
+/** The three traded tokens closest in TVL to a protocol: its nearest comparables. */
+export function nearestComparables(traded: SnapshotProtocol[], tvl: number): Array<[string, string | null, number, number]> {
+  return [...traded]
+    .map((p) => ({ p, d: Math.abs(Math.log(p.tvl_usd) - Math.log(tvl)) }))
+    .sort((a, b) => a.d - b.d || (a.p.slug < b.p.slug ? -1 : 1))
+    .slice(0, 3)
+    .map(({ p }) => [p.name, p.symbol, p.tvl_usd, p.mcap_usd!] as [string, string | null, number, number]);
+}
+
+/** A board-shaped row for a protocol the board does not rank, scored by the same model. */
+function syntheticBoardRow(p: SnapshotProtocol, snapshot: Snapshot, validation: Validation): BoardRow {
+  const v = impliedValue(p, snapshot.as_of, MODEL);
+  const verdict = verdictFor(v.implied, validation.band_lo, p.change_7d);
+  return {
+    rank: 0,
+    slug: p.slug,
+    name: p.name,
+    category: p.category,
+    chains: p.chains,
+    tvl_usd: p.tvl_usd,
+    change_7d: p.change_7d,
+    mcap_usd: p.mcap_usd,
+    listed_at: p.listed_at,
+    gecko_id: p.gecko_id,
+    symbol: p.symbol,
+    token_status: 'pre-token',
+    watchlist: snapshot.watchlist.includes(p.slug),
+    age_days: v.age,
+    implied_value_usd: v.implied,
+    band_lo_usd: Math.round(v.implied * validation.band_lo),
+    band_hi_usd: Math.round(v.implied * validation.band_hi),
+    verdict: verdict.verdict,
+    verdict_why: verdict.why,
+    model: {
+      category_multiple: v.categoryMult,
+      growth_pct: v.growthPct,
+      growth_multiplier: round4(v.growthMult),
+      maturity_multiplier: round4(v.maturityMult),
+      chain_multiplier: round4(v.chainMult),
+      age_days: v.age,
+    },
+    farm_steps: farmSteps(p, v.age, snapshot.as_of).map(stepText),
+  };
+}
+
+/** One row per category with board rows: rows, tokens, the ever rate and the fitted premium. */
+export function categoryStats(snapshot: Snapshot, board: BoardRow[], validation: Validation): CatStat[] {
+  const by: Record<string, { rows: number; tot: number; tok: number; old: number; oldTok: number }> = {};
+  for (const p of snapshot.protocols) {
+    const c = p.category ?? 'Other';
+    const s = (by[c] ??= { rows: 0, tot: 0, tok: 0, old: 0, oldTok: 0 });
+    s.tot++;
+    if (!isPreToken(p)) s.tok++;
+    const a = ageDays(snapshot.as_of, p.listed_at);
+    if (a !== null && a >= 365) {
+      s.old++;
+      if (!isPreToken(p)) s.oldTok++;
+    }
+  }
+  for (const r of board) (by[r.category ?? 'Other'] ??= { rows: 0, tot: 0, tok: 0, old: 0, oldTok: 0 }).rows++;
+  return Object.keys(by)
+    .map((c) => {
+      const s = by[c]!;
+      const ever = s.old >= 5 ? Math.round((s.oldTok / s.old) * 100) : null;
+      return [c, MODEL.category_multiples[c] ?? MODEL.default_multiple, s.rows, s.tok, s.tot, ever, validation.cat_prem[c] ?? null] as CatStat;
+    })
+    .filter((row) => row[2] > 0)
+    .sort((a, b) => b[2] - a[2] || (a[0] < b[0] ? -1 : 1));
 }
 
 /** Everything the dashboard renders, from the snapshot. */
@@ -721,6 +882,13 @@ export function buildRadar(snapshot: Snapshot, model: ModelConstants = MODEL): {
   const live = liveRows(snapshot);
   const early = board.filter((r) => !r.watchlist).length;
   validation.pre_points = board.map((r) => [round3(Math.log10(r.tvl_usd)), round3(Math.log10(r.implied_value_usd))] as [number, number]);
+  const traded = tradedSet(snapshot);
+  const cmpFor = (tvl: number): Array<[string, string | null, number, number]> => nearestComparables(traded, tvl);
+  const boardBySlug = new Map(board.map((r) => [r.slug, r]));
+  const launchpad = newestPreToken(snapshot).map((p) => {
+    const row = boardBySlug.get(p.slug) ?? syntheticBoardRow(p, snapshot, validation);
+    return { ...radarRow(row), cmp: cmpFor(p.tvl_usd) };
+  });
   const radar: RadarData = {
     as_of: snapshot.as_of,
     source: snapshot.source,
@@ -732,9 +900,12 @@ export function buildRadar(snapshot: Snapshot, model: ModelConstants = MODEL): {
     early_size: early,
     live_size: live.length,
     validation,
-    rows: board.map(radarRow),
+    rows: board.map((r) => ({ ...radarRow(r), cmp: cmpFor(r.tvl_usd) })),
     live,
     hot: snapshot.protocols.map((p) => [p.name, p.chains, p.tvl_usd, p.change_7d] as [string, string[], number, number | null]),
+    acct: accounting(snapshot),
+    launchpad,
+    catstats: categoryStats(snapshot, board, validation),
   };
   return { board, radar };
 }
