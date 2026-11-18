@@ -30,7 +30,7 @@
       hInt: 'Watchlist: $50M+ TVL, no token on record. Implied value is a model, not a price, not a promise.',
       fWch: 'Watchlist', fWcS: 'the full list',
       fRws: 'Pre-token rows', fRwS: '{n} early',
-      factTop: 'Top value', fMed: 'Median value', fMdS: 'live tokens set aside: {n}',
+      fMed: 'Median value', fMdS: 'live tokens set aside: {n}',
       find: 'Search', srch: 'Search name or category',
       cat: 'Category', aCat: 'All categories',
       chain: 'Chain', aChn: 'All chains',
@@ -48,11 +48,11 @@
       sbTit: 'Model sandbox',
       sbInt: 'Recomputes each row live.',
       sbSc: 'Scale ×', sbGr: 'Growth', sbMt: 'Maturity', sbCh: 'Chain', sbRst: 'Reset',
-      cTit: 'Category multiples', cOth: 'Other',
+      cTit: 'Categories',
       mNte: 'TVL and 7-day growth: from the snapshot.',
       ft1: 'Data: ',
       foot2: 'No prediction of issuance or timing.',
-      val: 'Tested out of sample|Fitted on 4 of 5 folds of the {n} traded tokens. The P10–P90 band is this test’s spread.|Variant|Miss|≤3×|Rank ρ|Walk-fwd|Verdict|Worth farming|Marginal|Skip|Deposit|Farmer economics|Share at P10|Net after gas|Break-even|Net/hour|Traded tokens set the curve|TVL log $|Value log $|Traded tokens|Fitted curve|P25–P75 band|Hot — fastest 7-day TVL growth in this snapshot|Tracked since|Paper trading|Simulated: prices frozen at the 2026-11-14 snapshot.|Cash|Holdings|Total|Buy|Sell|Sell all|Amount|Not enough cash|Launchpad — newest pre-token protocols on this board|Newest on this board. Not confirmed launches: no launch date known|Hot',
+      val: 'Tested out of sample|Fitted on 4 of 5 folds of the {n} traded tokens. The P10–P90 band is this test’s spread.|Variant|Miss|≤3×|Rank ρ|Walk-fwd|Verdict|Worth farming|Marginal|Skip|Deposit|Farmer economics|Share at P10|Net after gas|Break-even|Net/hour|Traded tokens set the curve|TVL log $|Value log $|Traded tokens|Fitted curve|P25–P75 band|Hot — fastest 7-day TVL growth in this snapshot|Tracked since|Paper trading|Simulated: prices frozen at the 2026-11-14 snapshot.|Cash|Holdings|Total|Buy|Sell|Sell all|Amount|Not enough cash|Launchpad — newest pre-token protocols in this snapshot|Newest in this snapshot. Not confirmed launches: no launch date known|Hot|LOO|Newest 30%|Nearest traded comparables',
       rkOf: 'Rank {a} of {b}', cls: 'Close',
       eqTVL: 'TVL', eGrw: '7d', eqAge: 'Age', eChs: 'Chains',
       eCat: 'Category multiple ({cat})', eGrM: 'Growth multiplier', eMtM: 'Maturity multiplier', eChM: 'Chain multiplier',
@@ -62,6 +62,9 @@
       dNtD: ', not the board number.',
       wWch: 'Watchlist: ${n}M+ TVL.',
       wErl: 'Below the floor.',
+      acct: 'ranked|with token|bridges|liquid staking|exchange|versioned|wrapped|protocols read|set aside',
+      catH: 'Rows|With token|Ever (≥1y)|Premium',
+      howMade: 'How the figure is made',
     },
     id: {
       skip: 'Lewati ke papan', pTit: 'Watch RADAR: protokol pra-token',
@@ -70,7 +73,7 @@
       hInt: 'Watchlist: TVL $50 jt ke atas, tanpa token tercatat. Nilai tersirat adalah model, bukan harga, bukan janji.',
       fWch: 'Watchlist', fWcS: 'seluruh daftar',
       fRws: 'Baris pra-token', fRwS: '{n} awal',
-      factTop: 'Nilai tertinggi', fMed: 'Nilai median', fMdS: 'token live dipisahkan: {n}',
+      fMed: 'Nilai median', fMdS: 'token live dipisahkan: {n}',
       find: 'Cari', srch: 'Cari nama atau kategori',
       cat: 'Kategori', aCat: 'Semua kategori',
       chain: 'Chain', aChn: 'Semua chain',
@@ -88,11 +91,11 @@
       sbTit: 'Sandbox model',
       sbInt: 'Menghitung ulang tiap baris secara langsung.',
       sbSc: 'Skala ×', sbGr: 'Pertumbuhan', sbMt: 'Kematangan', sbCh: 'Chain', sbRst: 'Reset',
-      cTit: 'Pengali kategori', cOth: 'Lainnya',
+      cTit: 'Kategori',
       mNte: 'TVL dan pertumbuhan 7 hari dari snapshot.',
       ft1: 'Data: ',
       foot2: 'Bukan prediksi penerbitan atau waktu.',
-      val: 'Diuji di luar sampel|Dipasang pada 4 dari 5 lipatan {n} token yang diperdagangkan. Rentang P10–P90 adalah sebaran tes ini.|Varian|Miss|≤3×|Rank ρ|Walk-fwd|Putusan|Layak di-farming|Marginal|Lewati|Deposit|Ekonomi farming|Bagian pada P10|Netto setelah gas|Titik impas|Netto/jam|Token diperdagangkan menentukan kurva|TVL log $|Nilai log $|Token diperdagangkan|Kurva hasil pas|Rentang P25–P75|Populer — pertumbuhan TVL 7 hari tercepat di snapshot ini|Dilacak sejak|Simulasi trading|Simulasi: harga beku di snapshot 2026-11-14.|Kas|Posisi|Total|Beli|Jual|Jual semua|Jumlah|Kas tidak cukup|Launchpad — protokol pra-token terbaru di papan ini|Terbaru di papan ini. Bukan peluncuran terkonfirmasi: tanggal peluncuran belum diketahui|Populer',
+      val: 'Diuji di luar sampel|Dipasang pada 4 dari 5 lipatan {n} token yang diperdagangkan. Rentang P10–P90 adalah sebaran tes ini.|Varian|Miss|≤3×|Rank ρ|Walk-fwd|Putusan|Layak di-farming|Marginal|Lewati|Deposit|Ekonomi farming|Bagian pada P10|Netto setelah gas|Titik impas|Netto/jam|Token diperdagangkan menentukan kurva|TVL log $|Nilai log $|Token diperdagangkan|Kurva hasil pas|Rentang P25–P75|Populer — pertumbuhan TVL 7 hari tercepat di snapshot ini|Dilacak sejak|Simulasi trading|Simulasi: harga beku di snapshot 2026-11-14.|Kas|Posisi|Total|Beli|Jual|Jual semua|Jumlah|Kas tidak cukup|Launchpad — protokol pra-token terbaru di snapshot ini|Terbaru di snapshot ini. Bukan peluncuran terkonfirmasi: tanggal peluncuran belum diketahui|Populer|LOO|30% terbaru|Pembanding terdekat',
       rkOf: 'Peringkat {a} dari {b}', cls: 'Tutup',
       eqTVL: 'TVL', eGrw: '7h', eqAge: 'Usia', eChs: 'Chain',
       eCat: 'Pengali kategori ({cat})', eGrM: 'Pengali pertumbuhan', eMtM: 'Pengali kematangan', eChM: 'Pengali chain',
@@ -102,6 +105,9 @@
       dNtD: ', bukan angka papan.',
       wWch: 'Watchlist: TVL ${n} jt ke atas.',
       wErl: 'Di bawah ambang.',
+      acct: 'terperingkat|bertoken|jembatan|staking cair|bursa|berversi|terbungkus|protokol dibaca|dipisahkan',
+      catH: 'Baris|Dengan token|Pernah (≥1y)|Premium',
+      howMade: 'Cara angka ini dibuat',
     },
     es: {
       skip: 'Saltar al tablero', pTit: 'Watch RADAR: protocolos pre-token',
@@ -110,7 +116,7 @@
       hInt: 'Lista: TVL de $50 M o más, sin token registrado. El valor implícito es un modelo, no un precio, no una promesa.',
       fWch: 'Lista', fWcS: 'la lista completa',
       fRws: 'Filas pre-token', fRwS: '{n} tempranos',
-      factTop: 'Valor máximo', fMed: 'Valor mediano', fMdS: 'tokens en vivo apartados: {n}',
+      fMed: 'Valor mediano', fMdS: 'tokens en vivo apartados: {n}',
       find: 'Buscar', srch: 'Buscar nombre o categoría',
       cat: 'Categoría', aCat: 'Todas las categorías',
       chain: 'Cadena', aChn: 'Todas las cadenas',
@@ -128,11 +134,11 @@
       sbTit: 'Sandbox del modelo',
       sbInt: 'Recalcula cada fila en vivo.',
       sbSc: 'Escala ×', sbGr: 'Crecimiento', sbMt: 'Madurez', sbCh: 'Cadena', sbRst: 'Restablecer',
-      cTit: 'Múltiplos por categoría', cOth: 'Otras',
+      cTit: 'Categorías',
       mNte: 'TVL y crecimiento a 7 días, de la instantánea.',
       ft1: 'Datos: ',
       foot2: 'No predice emisión ni fecha.',
-      val: 'Probado fuera de muestra|Ajustado con 4 de 5 pliegues de los {n} tokens negociados. La banda P10–P90 es la dispersión de esta prueba.|Variante|Error|≤3×|Rango ρ|Adelante|Veredicto|Vale la pena|Marginal|Omitir|Depósito|Economía del farming|Parte en P10|Neto tras gas|Equilibrio|Neto/hora|Los tokens que cotizan fijan la curva|TVL log $|Valor log $|Tokens negociados|Curva ajustada|Banda P25–P75|Tendencia — mayor crecimiento de TVL en 7 días en esta instantánea|Seguido desde|Trading simulado|Simulación: precios fijos en la instantánea 2026-11-14.|Efectivo|Posiciones|Total|Comprar|Vender|Vender todo|Cantidad|Efectivo insuficiente|Launchpad — protocolos pre-token más recientes de este tablero|Los más recientes de este tablero. No son lanzamientos confirmados: no se conoce fecha de lanzamiento|Tendencia',
+      val: 'Probado fuera de muestra|Ajustado con 4 de 5 pliegues de los {n} tokens negociados. La banda P10–P90 es la dispersión de esta prueba.|Variante|Error|≤3×|Rango ρ|Adelante|Veredicto|Vale la pena|Marginal|Omitir|Depósito|Economía del farming|Parte en P10|Neto tras gas|Equilibrio|Neto/hora|Los tokens que cotizan fijan la curva|TVL log $|Valor log $|Tokens negociados|Curva ajustada|Banda P25–P75|Tendencia — mayor crecimiento de TVL en 7 días en esta instantánea|Seguido desde|Trading simulado|Simulación: precios fijos en la instantánea 2026-11-14.|Efectivo|Posiciones|Total|Comprar|Vender|Vender todo|Cantidad|Efectivo insuficiente|Launchpad — protocolos pre-token más recientes de esta instantánea|Los más recientes de esta instantánea. No son lanzamientos confirmados: no se conoce fecha de lanzamiento|Tendencia|LOO|30% más recientes|Comparables más cercanos',
       rkOf: 'Puesto {a} de {b}', cls: 'Cerrar',
       eqTVL: 'TVL', eGrw: '7d', eqAge: 'Antigüedad', eChs: 'Cadenas',
       eCat: 'Múltiplo de categoría ({cat})', eGrM: 'Multiplicador de crecimiento', eMtM: 'Multiplicador de madurez', eChM: 'Multiplicador de cadena',
@@ -142,6 +148,9 @@
       dNtD: ', no es el número del tablero.',
       wWch: 'Lista: ${n} M+ de TVL.',
       wErl: 'Por debajo del mínimo.',
+      acct: 'clasificados|con token|puentes|staking líquido|exchange|versionados|envueltos|protocolos leídos|apartados',
+      catH: 'Filas|Con token|Alguna vez (≥1y)|Premium',
+      howMade: 'Cómo se calcula la cifra',
     },
     zh: {
       skip: '跳到榜单', pTit: 'Watch RADAR：按隐含价值排名',
@@ -150,7 +159,7 @@
       hInt: '观察名单为 TVL 5000 万美元以上且无代币记录；隐含价值只是模型，不是价格，也不是承诺。',
       fWch: '观察名单', fWcS: '完整名单',
       fRws: '无代币行', fRwS: '{n} 个早期',
-      factTop: '最高价值', fMed: '价值中位数', fMdS: '已发币的代币已分开：{n}',
+      fMed: '价值中位数', fMdS: '已发币的代币已分开：{n}',
       find: '搜索', srch: '搜索名称或类别',
       cat: '类别', aCat: '全部类别',
       chain: '链', aChn: '全部链',
@@ -168,11 +177,11 @@
       sbTit: '模型沙盒',
       sbInt: '实时重算每行。',
       sbSc: '缩放 ×', sbGr: '增长', sbMt: '成熟度', sbCh: '每条链', sbRst: '重置',
-      cTit: '类别倍数', cOth: '其他',
+      cTit: '类别',
       mNte: 'TVL 与七日增长来自快照。',
       ft1: '数据：',
       foot2: '非发币时间预测。',
-      val: '样本外测试|在 {n} 个已交易代币的五折中的四折上拟合。P10–P90 区间即该测试的离散程度。|变体|误差|3倍内|秩 ρ|前向|结论|值得挖矿|一般|跳过|本金|挖矿收益|P10 份额|扣除 gas 后净收益|盈亏点|每小时净收益|已交易代币决定曲线|TVL log $|价值 log $|已交易代币|拟合曲线|P25–P75 区间|热门——本快照中 7 日 TVL 增长最快|收录于|模拟交易|模拟：价格冻结于 2026-11-14 快照。|现金|持仓|总计|买入|卖出|全部卖出|金额|现金不足|Launchpad——本榜单最新收录的无代币协议|本榜单最新收录。并非已确认的发币：尚无已知的发币日期|热门',
+      val: '样本外测试|在 {n} 个已交易代币的五折中的四折上拟合。P10–P90 区间即该测试的离散程度。|变体|误差|3倍内|秩 ρ|前向|结论|值得挖矿|一般|跳过|本金|挖矿收益|P10 份额|扣除 gas 后净收益|盈亏点|每小时净收益|已交易代币决定曲线|TVL log $|价值 log $|已交易代币|拟合曲线|P25–P75 区间|热门——本快照中 7 日 TVL 增长最快|收录于|模拟交易|模拟：价格冻结于 2026-11-14 快照。|现金|持仓|总计|买入|卖出|全部卖出|金额|现金不足|Launchpad——本快照最新收录的无代币协议|本快照最新收录。并非已确认的发币：尚无已知的发币日期|热门|LOO|最新 30%|最接近的已交易代币',
       rkOf: '第 {a} 名，共 {b} 名', cls: '关闭',
       eqTVL: 'TVL', eGrw: '7日', eqAge: '年龄', eChs: '链数',
       eCat: '类别倍数（{cat}）', eGrM: '增长乘数', eMtM: '成熟度乘数', eChM: '链乘数',
@@ -182,6 +191,9 @@
       dNtD: '，非榜单数字。',
       wWch: '观察名单：TVL ${n} 百万美元以上。',
       wErl: '低于门槛。',
+      acct: '已排名|已发币|桥|流动质押|交易所|版本|包装|已读取协议|已分开',
+      catH: '行|已发币|曾发 (≥1y)|溢价',
+      howMade: '数字如何得出',
     }
   };
   var LANGS = [
@@ -198,8 +210,11 @@
     }
     return s;
   }
-  // val:0 title|1 intro|2 var|3 miss|4 within|5 rho|6 wf|7 verdict|8 worth|9 marg|10 skip|11 deposit|12 econ|13 share|14 net|15 be|16 hour|17 chart|18 x|19 y|20 traded|21 curve|22 band|23 hot|24 since|25 sim|26 frozen|27 cash|28 hold|29 total|30 buy|31 sell|32 all|33 amt|34 noCash|35 lp|36 lpNote|37 hotBtn
+  // val:0 title|1 intro|2 var|3 miss|4 within|5 rho|6 wf|7 verdict|8 worth|9 marg|10 skip|11 deposit|12 econ|13 share|14 net|15 be|16 hour|17 chart|18 x|19 y|20 traded|21 curve|22 band|23 hot|24 since|25 sim|26 frozen|27 cash|28 hold|29 total|30 buy|31 sell|32 all|33 amt|34 noCash|35 lp|36 lpNote|37 hotBtn|38 loo|39 cov|40 cmp
+  // acct:0 ranked|1 token|2 bridge|3 lst|4 cex|5 versioned|6 wrapped|7 read|8 aside; catH:0 rows|1 withTok|2 ever|3 prem
   function vstr(i) { return (t('val').split('|'))[i] || ''; }
+  function astr(i) { return (t('acct').split('|'))[i] || ''; }
+  function cstr(i) { return (t('catH').split('|'))[i] || ''; }
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function el(id) { return document.getElementById(id); }
@@ -223,58 +238,22 @@
   function sandboxActive() { return state.sb.scale !== 1 || state.sb.growth !== BASE_SB.growth || state.sb.maturity !== BASE_SB.maturity || state.sb.chain !== BASE_SB.chain; }
   function shownValue(row) { return sandboxActive() ? impliedOf(row, state.sb) : row.implied_value_usd; }
 
-  function chainOf(p) { return p.chains && p.chains.length ? p.chains[0] : '—'; }
-  function capitalFor(p) { var b = p.tvl_usd >= 5e9 ? 250 : p.tvl_usd >= 1e9 ? 150 : p.tvl_usd >= 1e8 ? 100 : 50; return Math.max(10, Math.round(b * state.deposit / 10000 / 5) * 5); }
   function holdDaysFor(age) { if (age == null) return 30; if (age < 180) return 60; if (age < 365) return 45; return 30; }
-  function actionFor(p, capital, chain) {
-    var c = (p.category || '').toLowerCase(), n = p.name;
-    if (c.indexOf('lend') >= 0 || c.indexOf('cdp') >= 0 || c.indexOf('collateral') >= 0) return 'Supply $' + capital + ' of USDC to ' + n + ' on ' + chain + ' and borrow $20 against it, then repay the borrow.';
-    if (c.indexOf('dex') >= 0 || c.indexOf('leveraged farm') >= 0) return 'Provide $' + capital + ' of liquidity to ' + n + "'s main pool on " + chain + ' and swap $10 through it once.';
-    if (c.indexOf('yield aggregator') >= 0 || c.indexOf('yield') >= 0) return 'Deposit $' + capital + ' of USDC into ' + n + "'s highest-yield vault on " + chain + ' and keep the shares.';
-    if (c.indexOf('perpetual') >= 0 || c.indexOf('derivative') >= 0) return 'Deposit $' + capital + ' of USDC as margin on ' + n + ' and open one small hedged perpetual position.';
-    if (c.indexOf('prediction') >= 0) return 'Fund $' + capital + ' and place one small prediction-market position on ' + n + '.';
-    if (c.indexOf('curator') >= 0 || c.indexOf('allocator') >= 0) return 'Deposit $' + capital + ' into a ' + n + ' curated vault on ' + chain + ' and keep the vault shares.';
-    if (c.indexOf('stable') >= 0) return 'Mint $' + capital + ' of the stable asset through ' + n + ' on ' + chain + ' and hold it in your wallet.';
-    if (c.indexOf('rwa') >= 0) return "Mint $" + capital + " of " + n + "'s yield-bearing asset on " + chain + ' and hold it for the full period.';
-    if (c.indexOf('insurance') >= 0) return 'Buy $' + capital + ' of cover from ' + n + ' on ' + chain + ' and keep the policy active.';
-    if (c.indexOf('restak') >= 0) return 'Restake $' + capital + ' of liquid-staking tokens through ' + n + ' on ' + chain + ' and keep the receipt.';
-    if (c.indexOf('basis') >= 0) return 'Deposit $' + capital + ' of USDC into ' + n + "'s basis vault on " + chain + ' and keep the position open.';
-    if (c.indexOf('payment') >= 0) return 'Pay $' + capital + ' through ' + n + ' on ' + chain + ' and keep the receipt for the activity record.';
-    if (c.indexOf('chain') >= 0) return 'Bridge $' + capital + ' of USDC onto the chain ' + n + ' serves and use it in one app there.';
-    if (c.indexOf('governance') >= 0) return 'Lock $' + capital + ' of voting power with ' + n + ' on ' + chain + ' and cast one vote.';
-    if (c.indexOf('otc') >= 0 || c.indexOf('marketplace') >= 0) return 'Place one $' + capital + ' order through ' + n + ' on ' + chain + ' and settle it in full.';
-    return 'Deposit $' + capital + ' of USDC into ' + n + ' on ' + chain + ' and keep the position open.';
-  }
-  function weeklyFor(p, chain) {
-    var c = (p.category || '').toLowerCase(), n = p.name;
-    if (c.indexOf('dex') >= 0 || c.indexOf('leveraged farm') >= 0) return 'Swap $10 through ' + n + ' on ' + chain + ' and adjust the liquidity position once.';
-    if (c.indexOf('lend') >= 0 || c.indexOf('cdp') >= 0 || c.indexOf('collateral') >= 0) return 'Borrow $10 against the supply on ' + n + ', then repay it the same week.';
-    if (c.indexOf('perpetual') >= 0 || c.indexOf('derivative') >= 0) return 'Close and reopen a small hedged position on ' + n + ' once.';
-    if (c.indexOf('prediction') >= 0) return 'Place one small prediction on ' + n + ' and let it settle.';
-    if (c.indexOf('curator') >= 0 || c.indexOf('allocator') >= 0 || c.indexOf('yield') >= 0) return 'Top up the ' + n + ' vault by $10 and claim any accrued rewards.';
-    if (c.indexOf('rwa') >= 0) return 'Check the accrued yield on the ' + n + ' asset and reinvest $10 of it.';
-    if (c.indexOf('governance') >= 0) return 'Vote on one ' + n + ' proposal, or delegate the vote if none is live.';
-    if (c.indexOf('insurance') >= 0) return 'Keep the ' + n + ' policy active and top it up by $10 if a new term opens.';
-    return 'Make one qualifying action on ' + n + ', such as a deposit, a swap or a vote.';
-  }
-  function stepText(step) {
-    var s = step.text + ' Cost: ' + step.cost + '. Time: ' + step.time + '.';
-    if (s.length > 600) s = s.slice(0, 596) + '...';
-    if (s.length < 20) s += ' Hold the position and check the protocol\'s own page.';
-    return s;
-  }
-  function farmSteps(p) {
-    var chain = chainOf(p), capital = capitalFor(p), hold = holdDaysFor(p.age_days);
-    var second = p.chains && p.chains.length > 1 ? p.chains[1] : null;
-    var cap2 = Math.max(5, Math.round(25 * state.deposit / 10000 / 5) * 5);
-    return [
-      { text: 'Use a fresh wallet that holds only the funds you plan to farm, and keep its seed phrase offline.', cost: 'under $3 of gas for the first transaction', time: '5 minutes' },
-      { text: actionFor(p, capital, chain), cost: '$' + capital + ' of capital and about $' + (capital >= 150 ? 8 : 4) + ' of gas', time: '15 minutes to set up' },
-      { text: second == null ? weeklyFor(p, chain) : 'Repeat the position on ' + second + ' with $' + cap2 + ', so the activity shows on both chains ' + p.name + ' runs on.', cost: second == null ? 'about $2 of gas a week' : '$' + cap2 + ' of capital and about $3 of gas', time: second == null ? '10 minutes a week' : '15 minutes' },
-      { text: 'Hold the position for at least ' + hold + ' days so the activity is counted in more than one snapshot.', cost: 'the $' + capital + ' stays in the position', time: hold + ' days' },
-      { text: "Before you withdraw, open " + p.name + "'s own points or rewards page and claim only from the link it publishes.", cost: 'no fee to check, and never pay to claim', time: '10 minutes' },
-      { text: 'Write the wallet, the dates and every transaction in a farm log so you can repeat the position or unwind it.', cost: 'nothing but the log', time: '5 minutes' }
-    ].map(stepText);
+  // The farm plan ships in data.js at the $10,000 deposit; a smaller deposit only re-scales the
+  // capital figures in steps 2-4 (the action, the second chain, the hold). At $10,000 the steps
+  // are board.json's, byte for byte.
+  function farmSteps(row) {
+    var steps = row.farm_steps || [];
+    if (state.deposit === 10000 || steps.length < 4) return steps;
+    var b = row.tvl_usd >= 5e9 ? 250 : row.tvl_usd >= 1e9 ? 150 : row.tvl_usd >= 1e8 ? 100 : 50;
+    var s = Math.max(10, Math.round(b * state.deposit / 10000 / 5) * 5);
+    var c2 = Math.max(5, Math.round(25 * state.deposit / 10000 / 5) * 5);
+    var g = s >= 150 ? 8 : 4;
+    var out = steps.slice();
+    out[1] = out[1].split('$' + b).join('$' + s).split('about $8 of gas').join('about $' + g + ' of gas');
+    if (out[2].indexOf('with $25, so the activity') >= 0) out[2] = out[2].replace('with $25, so the activity', 'with $' + c2 + ', so the activity');
+    out[3] = out[3].split('$' + b).join('$' + s);
+    return out;
   }
 
   function readHash() {
@@ -348,10 +327,21 @@
     dialog.innerHTML = detailHead('', vstr(23), state.chain === 'all' ? t('aChn') : state.chain) + '<div class="detail-body"><section class="detail-section">' + body + '</section></div>';
     if (!dialog.open) dialog.showModal();
   }
+  function renderAcct() {
+    var slot = el('acct-slot');
+    if (!slot) return;
+    var a = DATA.acct, tot = 0, i, stops = [], at = 0;
+    for (i = 0; i < a.length; i++) tot += a[i];
+    var cols = ['#0b7fa3', '#0f7a4d', '#6d4fc2', '#d97706', '#c4342b', '#64748b', '#94a3b8'];
+    for (i = 0; i < a.length; i++) { var p = a[i] / tot * 100; stops.push(cols[i] + ' ' + at.toFixed(1) + '% ' + (at + p).toFixed(1) + '%'); at += p; }
+    slot.innerHTML = '<section class="panel model"><p class="sub" style="margin:0 0 8px"><b>' + tot + '</b> ' + esc(astr(7)) + ' — ' + a[0] + ' ' + esc(astr(0)) + ', ' + (tot - a[0]) + ' ' + esc(astr(8)) + '</p>' +
+      '<div style="height:10px;border-radius:5px;background:linear-gradient(90deg,' + stops.join(',') + ')"></div>' +
+      '<p class="sub" style="margin:8px 0 0">' + a.map(function (n, j) { return '<span style="margin-right:12px;white-space:nowrap"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:' + cols[j] + '"></span> ' + n + ' ' + esc(astr(j)) + '</span>'; }).join('') + '</p></section>';
+  }
   function renderLp() {
     var slot = el('lp-slot');
     if (!slot) return;
-    var list = DATA.rows.filter(function (r) { return r.listed_at; }).sort(function (a, b) { return a.listed_at < b.listed_at ? 1 : a.listed_at > b.listed_at ? -1 : a.slug < b.slug ? -1 : 1; }).slice(0, 10);
+    var list = DATA.launchpad;
     slot.innerHTML = '<section class="panel model lp" id="lp-panel"><h2>' + esc(vstr(35)) + '</h2><p class="sub">' + esc(vstr(36)) + '</p>' + '<div class="table-wrap"><table><thead>' + ths([t('rank'), t('prtc'), t('tvl'), vstr(24), t('age'), t('impl'), vstr(7)]) + '</thead><tbody>' +
       list.map(function (r, i) {
         return '<tr data-slug="' + esc(r.slug) + '" tabindex="0"><td class="num">' + (i + 1) + '</td><td><div class="name"><b>' + esc(r.name) + '</b><span class="sub">' + esc(r.category || t('other')) + ' on ' + esc((r.chains || []).slice(0, 2).join(', ') || '—') + '</span></div></td><td class="num">' + fmtUsd(r.tvl_usd) + '</td><td class="num">' + esc(r.listed_at) + '</td><td class="num">' + fmtAge(r.age_days) + '</td><td class="num">' + fmtUsd(r.implied_value_usd) + '</td><td><span class="badge ' + r.verdict + '">' + esc(vstr(VL[r.verdict])) + '</span></td></tr>';
@@ -399,6 +389,10 @@
     var chains = Array.from(new Set(DATA.rows.reduce(function (acc, r) { return acc.concat(r.chains || []); }, []))).sort();
     var median = DATA.rows.map(function (r) { return r.implied_value_usd; }).sort(function (a, b) { return a - b; })[Math.floor(DATA.rows.length / 2)];
     var top = DATA.rows[0];
+    var total = DATA.rows.reduce(function (s, r) { return s + r.implied_value_usd; }, 0);
+    var vc = { worth: 0, marginal: 0, skip: 0 };
+    DATA.rows.forEach(function (r) { vc[r.verdict]++; });
+    var miss = Math.exp(DATA.validation.ship_miss);
     document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : state.lang;
     document.title = t('pTit');
     var skip = document.querySelector('.skip');
@@ -409,7 +403,8 @@
       '<div class="lang" role="group" aria-label="' + esc(t('lang')) + '">' + langButtons() + '</div></header>';
     html += '<section class="lede"><div><h1><span class="accent">' + esc(t('heroA', { n: DATA.watchlist_size })) + '</span>' + esc(t('heroB')) + '</h1>' +
       '<p>' + esc(t('hInt')) + '</p></div>' +
-      '<div class="facts">' + [[t('fWch'), DATA.watchlist_size + ' / ' + DATA.watchlist_size, t('fWcS')], [t('fRws'), DATA.board_size, t('fRwS', { n: DATA.early_size })], [t('factTop'), fmtUsd(top.implied_value_usd), top.name], [t('fMed'), fmtUsd(median), t('fMdS', { n: DATA.live_size })]].map(function (f) { return '<div class="fact"><span>' + esc(f[0]) + '</span><b>' + f[1] + '</b><small>' + esc(f[2]) + '</small></div>'; }).join('') + '</div></section>';
+      '<div class="facts">' + [[t('fWch'), DATA.watchlist_size + ' / ' + DATA.watchlist_size, t('fWcS')], [t('fRws'), DATA.board_size, t('fRwS', { n: DATA.early_size })], [t('impl'), fmtUsd(total), top.name + ' · ' + fmtUsd(top.implied_value_usd)], [t('fMed'), fmtUsd(median), t('fMdS', { n: DATA.live_size })], [vstr(3), '×' + miss.toFixed(1), vstr(38)], [vstr(8), vc.worth, vc.marginal + ' ' + vstr(9) + ' · ' + vc.skip + ' ' + vstr(10)]].map(function (f) { return '<div class="fact"><span>' + esc(f[0]) + '</span><b>' + f[1] + '</b><small>' + esc(f[2]) + '</small></div>'; }).join('') + '</div></section>';
+    html += '<div id="acct-slot"></div>';
     html += '<div class="controls">' +
       '<div class="field"><label for="q">' + esc(t('find')) + '</label><input type="search" id="q" placeholder="' + esc(t('srch')) + '" value="' + esc(state.q) + '" aria-label="' + esc(t('find')) + '"></div>' +
       '<div class="field"><label for="category">' + esc(t('cat')) + '</label><select id="category" aria-label="' + esc(t('cat')) + '">' + options(categories, state.category, t('aCat')) + '</select></div>' +
@@ -432,6 +427,7 @@
     bindControls();
     renderTable();
     renderModel();
+    renderAcct();
     if (state.selected) openDetail(state.selected, true);
   }
 
@@ -558,17 +554,15 @@
   function validHtml() {
     var v = DATA.validation;
     var rows = v.rows.map(function (r) {
-      return '<tr><td>' + esc(r.variant) + '</td>' + [r.loo_miss.toFixed(2), r.within_3x + '%', r.rank_rho.toFixed(2), r.walk_forward.toFixed(2)].map(function (n) { return '<td class="num">' + n + '</td>'; }).join('') + '</tr>';
+      return '<tr><td>' + esc(r.variant) + '</td>' + [r.loo_miss.toFixed(2), r.loo.toFixed(2), r.within_3x + '%', r.rank_rho.toFixed(2), r.walk_forward.toFixed(2)].map(function (n) { return '<td class="num">' + n + '</td>'; }).join('') + '</tr>';
     }).join('');
-    return '<section class="panel model" id="valid-panel"><h2>' + esc(vstr(0)) + '</h2><p class="sub">' + esc(vstr(1).replace('{n}', v.traded)) + '</p><table class="cat-table"><thead>' + ths([vstr(2), vstr(3), vstr(4), vstr(5), vstr(6)]) + '</thead><tbody>' + rows + '</tbody></table>' + chartHtml() + '</section>';
+    return '<section class="panel model" id="valid-panel"><h2>' + esc(vstr(0)) + '</h2><p class="sub">' + esc(vstr(1).replace('{n}', v.traded)) + '</p><table class="cat-table"><thead>' + ths([vstr(2), vstr(3), vstr(38), vstr(4), vstr(5), vstr(6)]) + '</thead><tbody>' + rows + '</tbody></table><p class="sub">' + esc(vstr(39)) + ': ' + esc(vstr(4)) + ' ' + v.cov3 + '% · P25–P75 ' + v.cov2575 + '% · P10–P90 ' + v.cov1090 + '%</p>' + chartHtml() + '</section>';
   }
   function renderModel() {
     var slot = el('model-slot');
     if (!slot || state.tab !== 'pre-token') { if (slot) slot.innerHTML = ''; return; }
     var m = DATA.model;
-    var cats = Object.keys(m.category_multiples).sort(function (a, b) { return m.category_multiples[b] - m.category_multiples[a]; });
-    var catRows = cats.map(function (c) { return '<tr><td>' + esc(c) + '</td><td class="num">' + m.category_multiples[c].toFixed(2) + '</td></tr>'; }).join('') +
-      '<tr><td>' + esc(t('cOth')) + '</td><td class="num">' + m.default_multiple.toFixed(2) + '</td></tr>';
+    var catRows = DATA.catstats.map(function (c) { return '<tr><td>' + esc(c[0]) + '</td><td class="num">' + c[1].toFixed(2) + '</td><td class="num">' + c[2] + '</td><td class="num">' + c[3] + '/' + c[4] + '</td><td class="num">' + (c[5] == null ? '—' : c[5] + '%') + '</td><td class="num">' + (c[6] == null ? '—' : c[6].toFixed(2)) + '</td></tr>'; }).join('');
     slot.innerHTML = validHtml() + '<section class="panel model"><h2>' + esc(t('mTit')) + '</h2>' +
       '<p class="sub">' + esc(t('mInt')) + '</p>' +
       '<div class="formula">implied = round( tvl_usd × <b>category</b> × (1 + clamp(change_7d, ' + m.growth_floor + ', ' + m.growth_cap + ') / 100 × ' + m.growth_weight + ') × (' + m.maturity_floor + ' + min(age_days, ' + m.maturity_days + ') / ' + m.maturity_days + ' × ' + m.maturity_range + ') × (1 + min(chains − 1, ' + m.chain_cap + ') × ' + m.chain_step + ') )</div>' +
@@ -577,7 +571,7 @@
       '<div class="sandbox">' + [['scale', 'sbSc', .5, 1.5, .05], ['growth', 'sbGr', 0, 1, .05], ['maturity', 'sbMt', 0, .6, .05], ['chain', 'sbCh', 0, .05, .01]].map(function (f) { return '<div class="field"><label for="sb-' + f[0] + '">' + esc(t(f[1])) + ' <output id="sb-' + f[0] + '-v">' + state.sb[f[0]].toFixed(2) + '</output></label><input type="range" id="sb-' + f[0] + '" min="' + f[2] + '" max="' + f[3] + '" step="' + f[4] + '" value="' + state.sb[f[0]] + '"></div>'; }).join('') +
       '</div><button class="button ghost" type="button" id="sb-reset">' + esc(t('sbRst')) + '</button>' +
       '<h3 style="margin:18px 0 4px;font-size:15px">' + esc(t('cTit')) + '</h3>' +
-      '<table class="cat-table"><tbody>' + catRows + '</tbody></table>' +
+      '<table class="cat-table"><thead>' + ths([t('cat'), '×', cstr(0), cstr(1), cstr(2), cstr(3)]) + '</thead><tbody>' + catRows + '</tbody></table>' +
       '<p class="note" style="margin-top:12px">' + esc(t('mNte', { n: m.unknown_age_days })) + '</p>' +
       '</section>';
     var bind = function (id, key) {
@@ -635,13 +629,15 @@
     var row = null, live = null;
     DATA.rows.forEach(function (r) { if (r.slug === slug) row = r; });
     if (!row) DATA.live.forEach(function (r) { if (r.slug === slug) live = r; });
+    if (!row && !live) DATA.launchpad.forEach(function (r) { if (r.slug === slug) row = r; });
     if (!row && !live) return;
     state.selected = slug;
     if (!fromHash) writeHash();
     ensureDialog();
-    var recomputed = 0, steps = [], share = 0, net = 0, hours = 1, beTxt = '', why = '';
+    var recomputed = 0, steps = [], share = 0, net = 0, hours = 1, beTxt = '', why = '', run1 = 0, run2 = 0, run3 = 0, run4 = 0;
     if (row) {
       recomputed = impliedOf(row, { scale: 1, growth: DATA.model.growth_weight, maturity: DATA.model.maturity_range, chain: DATA.model.chain_step });
+      run1 = row.tvl_usd * row.category_multiple; run2 = run1 * row.growth_multiplier; run3 = run2 * row.maturity_multiplier; run4 = run3 * row.chain_multiplier;
       steps = farmSteps(row);
       share = row.band_lo_usd * state.deposit / row.tvl_usd;
       net = share - 15;
@@ -650,11 +646,14 @@
       beTxt = be >= 999 ? '>999%' : be.toFixed(1) + '%';
       why = row.watchlist ? t('wWch', { n: Math.round(DATA.floor_usd / 1e6) }) : t('wErl');
     }
-    var html = live ? liveHtml(live) : detailHead(t('rkOf', { a: row.rank, b: DATA.board_size }) + ' · ' + (row.watchlist ? t('wLst') : t('early')), row.name, (row.category || t('other')) + ' on ' + ((row.chains || []).join(', ') || '—')) +
-      '<div class="detail-body"><section class="detail-section"><h3>' + esc(t('impl')) + '</h3><div class="equation">' +
-      [[t('eqTVL'), fmtUsd(row.tvl_usd)], [t('eGrw'), fmtPct(row.change_7d)], [t('eqAge'), fmtAge(row.age_days)], [vstr(24), row.listed_at || ''], [t('eChs'), (row.chains || []).length], [t('eCat', { cat: row.category || t('other') }), row.category_multiple.toFixed(2)], [t('eGrM'), row.growth_multiplier], [t('eMtM'), row.maturity_multiplier], [t('eChM'), row.chain_multiplier]].filter(function (p) { return p[1] !== ''; }).map(function (p) { return eqRow(p[0], p[1]); }).join('') +
+    var html = live ? liveHtml(live) : detailHead((row.rank > 0 ? t('rkOf', { a: row.rank, b: DATA.board_size }) : 'Launchpad') + ' · ' + (row.watchlist ? t('wLst') : t('early')), row.name, (row.category || t('other')) + ' on ' + ((row.chains || []).join(', ') || '—')) +
+      '<div class="detail-body"><section class="detail-section"><h3>' + esc(t('howMade')) + '</h3><div class="equation">' +
+      [[t('eqTVL'), fmtUsd(row.tvl_usd)], [t('eGrw'), fmtPct(row.change_7d)], [t('eqAge'), fmtAge(row.age_days)], [vstr(24), row.listed_at || ''], [t('eChs'), (row.chains || []).length], [t('eCat', { cat: row.category || t('other') }), row.category_multiple.toFixed(2) + ' → ' + fmtUsd(run1)], [t('eGrM'), row.growth_multiplier + ' → ' + fmtUsd(run2)], [t('eMtM'), row.maturity_multiplier + ' → ' + fmtUsd(run3)], [t('eChM'), row.chain_multiplier + ' → ' + fmtUsd(run4)]].filter(function (p) { return p[1] !== ''; }).map(function (p) { return eqRow(p[0], p[1]); }).join('') +
       '<div class="total"><span>' + esc(t('impl')) + '</span><b class="num">' + fmtUsd(row.implied_value_usd) + '</b></div></div>' +
-      '<p class="sub">' + esc(t('dNtA', { val: fmtUsd(recomputed) })) + esc(recomputed === row.implied_value_usd ? t('dNtS') : t('dNtD')) + ' ' + esc(why) + '</p></section>' +
+      '<p class="sub">' + esc(t('dNtA', { val: fmtUsd(recomputed) })) + esc(recomputed === row.implied_value_usd ? t('dNtS') : t('dNtD')) + ' ' + esc(why) + '</p>' +
+      '<h3 style="margin:18px 0 8px;font-size:15px">' + esc(vstr(40)) + '</h3>' +
+      (row.cmp || []).map(function (c) { return '<div class="name"><b>' + esc(c[0]) + (c[1] ? ' (' + esc(c[1]) + ')' : '') + '</b><span class="sub">' + fmtUsd(c[2]) + ' TVL · ' + fmtUsd(c[3]) + ' cap</span></div>'; }).join('') +
+      '</section>' +
       '<section class="detail-section"><h3>' + esc(vstr(12)) + '</h3><div class="equation">' +
       [[13, fmtUsd(share)], [14, fmtUsd(net)], [15, beTxt], [16, fmtUsd(net / hours)]].map(function (p) { return eqRow(vstr(p[0]), p[1]); }).join('') + '</div>' +
       '<p class="sub">' + esc(row.verdict_why) + '</p></section>' +
