@@ -135,6 +135,13 @@ export interface BoardRow {
   watchlist: boolean;
   age_days: number | null;
   implied_value_usd: number;
+  /** P10–P90 of the implied value, from the shipped model's own out-of-sample spread. */
+  band_lo_usd: number;
+  band_hi_usd: number;
+  /** Whether the row is worth farming, on its P10 value and its seven-day growth. */
+  verdict: 'worth' | 'marginal' | 'skip';
+  /** The one-line reason for the verdict, in English: it is data, like the farm plan. */
+  verdict_why: string;
   model: {
     category_multiple: number;
     growth_pct: number;
@@ -160,6 +167,10 @@ export interface RadarRow {
   age_days: number | null;
   watchlist: boolean;
   implied_value_usd: number;
+  band_lo_usd: number;
+  band_hi_usd: number;
+  verdict: 'worth' | 'marginal' | 'skip';
+  verdict_why: string;
   category_multiple: number;
   growth_multiplier: number;
   maturity_multiplier: number;
@@ -175,7 +186,46 @@ export interface LiveRow {
   tvl_usd: number;
   mcap_usd: number | null;
   change_7d: number | null;
+  listed_at: string | null;
 }
+
+/** One variant of the model family, tested out of sample on the traded tokens. */
+export interface ValidationRow {
+  /** The variant's name, as the dashboard shows it. */
+  variant: string;
+  /** Median |ln(pred/mcap)| on held-out folds: the typical factor the prediction is off by. */
+  loo_miss: number;
+  /** Share of held-out predictions within 3x of the traded market cap, 0..100. */
+  within_3x: number;
+  /** Spearman rank correlation of held-out predictions against market cap. */
+  rank_rho: number;
+  /** Median |ln| error fitting the oldest 70% of listings and scoring the newest 30%. */
+  walk_forward: number;
+}
+
+/** The out-of-sample test of the model family, and the chart it draws. */
+export interface Validation {
+  /** Traded tokens the test is fitted and scored on: a market cap above zero, no CEX. */
+  traded: number;
+  /** One row per variant, cheapest first. */
+  rows: ValidationRow[];
+  /** exp(q10) and exp(q90) of the shipped model's out-of-fold log residuals: the band factors. */
+  band_lo: number;
+  band_hi: number;
+  /** The log-log curve fitted on all traded tokens: ln(mcap) = curve_a + curve_b * ln(tvl). */
+  curve_a: number;
+  curve_b: number;
+  /** P25 and P75 of the curve fit's residuals, in log units: the chart's band. */
+  band_p25: number;
+  band_p75: number;
+  /** Traded tokens as [log10 tvl, log10 mcap], three decimals. */
+  traded_points: Array<[number, number]>;
+  /** Board rows as [log10 tvl, log10 implied], three decimals. */
+  pre_points: Array<[number, number]>;
+}
+
+/** The Hot list's source: one row per protocol — name, chains, TVL, 7-day change — for the page to rank by momentum. */
+export type HotSource = Array<[string, string[], number, number | null]>;
 
 /** Everything the dashboard needs: the board, the live set, and the model it runs. */
 export interface RadarData {
@@ -188,8 +238,10 @@ export interface RadarData {
   board_size: number;
   early_size: number;
   live_size: number;
+  validation: Validation;
   rows: RadarRow[];
   live: LiveRow[];
+  hot: HotSource;
 }
 
 /** Why the snapshot is not one this model can score. */
@@ -270,7 +322,8 @@ function bySlug(protocols: SnapshotProtocol[]): Map<string, SnapshotProtocol> {
 }
 
 /** The protocols the board ranks, strongest first, with ranks 1..n. */
-export function buildBoard(snapshot: Snapshot, model: ModelConstants = MODEL): BoardRow[] {
+export function buildBoard(snapshot: Snapshot, model: ModelConstants = MODEL, validation: Validation | null = null): BoardRow[] {
+  const val = validation ?? validateModel(snapshot);
   const index = bySlug(snapshot.protocols);
   const chosen = new Map<string, SnapshotProtocol>();
   // The watchlist is the floor: every slug, even one the snapshot no longer carries (it cannot, but
@@ -290,32 +343,39 @@ export function buildBoard(snapshot: Snapshot, model: ModelConstants = MODEL): B
     return { p, ...v };
   });
   scored.sort((a, b) => b.implied - a.implied || (a.p.slug < b.p.slug ? -1 : a.p.slug > b.p.slug ? 1 : 0));
-  return scored.map((s, i) => ({
-    rank: i + 1,
-    slug: s.p.slug,
-    name: s.p.name,
-    category: s.p.category,
-    chains: s.p.chains,
-    tvl_usd: s.p.tvl_usd,
-    change_7d: s.p.change_7d,
-    mcap_usd: s.p.mcap_usd,
-    listed_at: s.p.listed_at,
-    gecko_id: s.p.gecko_id,
-    symbol: s.p.symbol,
-    token_status: 'pre-token',
-    watchlist: snapshot.watchlist.includes(s.p.slug),
-    age_days: s.age,
-    implied_value_usd: s.implied,
-    model: {
-      category_multiple: s.categoryMult,
-      growth_pct: s.growthPct,
-      growth_multiplier: round4(s.growthMult),
-      maturity_multiplier: round4(s.maturityMult),
-      chain_multiplier: round4(s.chainMult),
+  return scored.map((s, i) => {
+    const verdict = verdictFor(s.implied, val.band_lo, s.p.change_7d);
+    return {
+      rank: i + 1,
+      slug: s.p.slug,
+      name: s.p.name,
+      category: s.p.category,
+      chains: s.p.chains,
+      tvl_usd: s.p.tvl_usd,
+      change_7d: s.p.change_7d,
+      mcap_usd: s.p.mcap_usd,
+      listed_at: s.p.listed_at,
+      gecko_id: s.p.gecko_id,
+      symbol: s.p.symbol,
+      token_status: 'pre-token',
+      watchlist: snapshot.watchlist.includes(s.p.slug),
       age_days: s.age,
-    },
-    farm_steps: farmSteps(s.p, s.age).map(stepText),
-  }));
+      implied_value_usd: s.implied,
+      band_lo_usd: Math.round(s.implied * val.band_lo),
+      band_hi_usd: Math.round(s.implied * val.band_hi),
+      verdict: verdict.verdict,
+      verdict_why: verdict.why,
+      model: {
+        category_multiple: s.categoryMult,
+        growth_pct: s.growthPct,
+        growth_multiplier: round4(s.growthMult),
+        maturity_multiplier: round4(s.maturityMult),
+        chain_multiplier: round4(s.chainMult),
+        age_days: s.age,
+      },
+      farm_steps: farmSteps(s.p, s.age).map(stepText),
+    };
+  });
 }
 
 const round4 = (n: number): number => Math.round(n * 1e4) / 1e4;
@@ -447,7 +507,185 @@ export function liveRows(snapshot: Snapshot): LiveRow[] {
       tvl_usd: p.tvl_usd,
       mcap_usd: p.mcap_usd,
       change_7d: p.change_7d,
+      listed_at: p.listed_at,
     }));
+}
+
+/** A finite median of numbers, or 0 for an empty set. */
+function medianOf(values: number[]): number {
+  const s = [...values].sort((a, b) => a - b);
+  if (s.length === 0) return 0;
+  return s.length % 2 === 1 ? s[(s.length - 1) / 2]! : (s[s.length / 2 - 1]! + s[s.length / 2]!) / 2;
+}
+
+/** The q-th quantile of a sorted array, 0 <= q <= 1. */
+function quantileOf(sorted: number[], q: number): number {
+  if (sorted.length === 0) return 0;
+  return sorted[Math.min(sorted.length - 1, Math.floor(q * (sorted.length - 1)))]!;
+}
+
+/** Round to three decimals, for the chart's points and the validation's factors. */
+const round3 = (n: number): number => Math.round(n * 1000) / 1000;
+
+/** Spearman rank correlation of two equal-length arrays. */
+function spearman(xs: number[], ys: number[]): number {
+  const rank = (arr: number[]): number[] => {
+    const order = arr.map((v, i) => [v, i] as const).sort((a, b) => a[0] - b[0]);
+    const r = new Array<number>(arr.length);
+    order.forEach(([, i], pos) => { r[i] = pos + 1; });
+    return r;
+  };
+  const rx = rank(xs), ry = rank(ys);
+  const mx = rx.reduce((a, b) => a + b, 0) / rx.length, my = ry.reduce((a, b) => a + b, 0) / ry.length;
+  let num = 0, dx = 0, dy = 0;
+  for (let i = 0; i < rx.length; i++) { num += (rx[i]! - mx) * (ry[i]! - my); dx += (rx[i]! - mx) ** 2; dy += (ry[i]! - my) ** 2; }
+  return dx === 0 || dy === 0 ? 0 : num / Math.sqrt(dx * dy);
+}
+
+/** The traded tokens the model family is fitted and tested on: a market cap above zero, no CEX. */
+function tradedSet(snapshot: Snapshot): SnapshotProtocol[] {
+  return snapshot.protocols.filter((p) => !isPreToken(p) && p.mcap_usd !== null && p.mcap_usd > 0 && p.category !== 'CEX');
+}
+
+/** OLS on ln(mcap) against ln(tvl): the size curve's intercept and slope. */
+function logLogFit(set: SnapshotProtocol[]): { a: number; b: number } {
+  const xs = set.map((p) => Math.log(p.tvl_usd)), ys = set.map((p) => Math.log(p.mcap_usd!));
+  const mx = xs.reduce((a, b) => a + b, 0) / xs.length, my = ys.reduce((a, b) => a + b, 0) / ys.length;
+  let num = 0, den = 0;
+  for (let i = 0; i < xs.length; i++) { num += (xs[i]! - mx) * (ys[i]! - my); den += (xs[i]! - mx) ** 2; }
+  const b = den === 0 ? 0 : num / den;
+  return { a: my - b * mx, b };
+}
+
+/** Category offsets from a fit: median residual per category, shrunk toward zero by n/(n+4). */
+function categoryOffsets(set: SnapshotProtocol[], fit: { a: number; b: number }): Record<string, number> {
+  const by: Record<string, number[]> = {};
+  for (const p of set) {
+    const c = p.category ?? 'Other';
+    (by[c] ??= []).push(Math.log(p.mcap_usd!) - (fit.a + fit.b * Math.log(p.tvl_usd)));
+  }
+  const out: Record<string, number> = {};
+  for (const c of Object.keys(by)) out[c] = medianOf(by[c]!) * (by[c]!.length / (by[c]!.length + 4));
+  return out;
+}
+
+/** Everything one variant's fit carries: flat multiple, size curve, and category offsets. */
+interface VariantFit { flat: number; a: number; b: number; cat: Record<string, number>; }
+
+function fitVariant(train: SnapshotProtocol[]): VariantFit {
+  const f = logLogFit(train);
+  return { flat: medianOf(train.map((p) => p.mcap_usd! / p.tvl_usd)), a: f.a, b: f.b, cat: categoryOffsets(train, f) };
+}
+
+/** One variant's prediction of a protocol's market cap. Variant 6 is the shipped linear model. */
+function variantPred(p: SnapshotProtocol, fit: VariantFit, variant: number, asOf: string): number {
+  const v = impliedValue(p, asOf, MODEL);
+  const curve = Math.exp(fit.a + fit.b * Math.log(p.tvl_usd));
+  const off = Math.exp(fit.cat[p.category ?? 'Other'] ?? 0);
+  if (variant === 0) return fit.flat * p.tvl_usd;
+  if (variant === 1) return curve;
+  if (variant === 2) return curve * off;
+  if (variant === 3) return curve * off * v.growthMult;
+  if (variant === 4) return curve * off * v.growthMult * v.maturityMult;
+  if (variant === 5) return curve * off * v.growthMult * v.maturityMult * v.chainMult;
+  return v.implied;
+}
+
+const VALIDATION_VARIANTS = ['Flat multiple', 'Size curve', '+ category', '+ growth', '+ maturity', '+ chain'];
+
+/**
+ * The model family, tested out of sample on the traded tokens: five folds by slug order, each
+ * variant fitted on four fifths and scored on the fifth, plus a walk-forward split that fits the
+ * oldest 70% of listings and scores the newest 30%. The shipped model's own out-of-fold residuals
+ * give the P10–P90 band factors. Everything is deterministic: folds follow slug order.
+ */
+export function validateModel(snapshot: Snapshot): Validation {
+  const traded = tradedSet(snapshot);
+  const sorted = [...traded].sort((a, b) => (a.slug < b.slug ? -1 : a.slug > b.slug ? 1 : 0));
+  const folds: SnapshotProtocol[][] = [[], [], [], [], []];
+  sorted.forEach((p, i) => folds[i % 5]!.push(p));
+  const dated = [...traded].filter((p) => p.listed_at !== null).sort((a, b) => (a.listed_at! < b.listed_at! ? -1 : 1));
+  const cut = Math.floor(dated.length * 0.7);
+  const wfTrain = dated.slice(0, cut), wfTest = dated.slice(cut);
+  const rows: ValidationRow[] = VALIDATION_VARIANTS.map((variant, v) => {
+    const miss: number[] = [];
+    const within: number[] = [];
+    const px: number[] = [];
+    const py: number[] = [];
+    for (let k = 0; k < 5; k++) {
+      const test = folds[k]!;
+      const train = folds.flatMap((g, j) => (j === k ? [] : g));
+      const fit = fitVariant(train);
+      for (const p of test) {
+        const pred = variantPred(p, fit, v, snapshot.as_of);
+        const r = Math.log(pred / p.mcap_usd!);
+        miss.push(Math.abs(r));
+        within.push(Math.abs(r) <= Math.log(3) ? 1 : 0);
+        px.push(pred);
+        py.push(p.mcap_usd!);
+      }
+    }
+    const wfFit = fitVariant(wfTrain);
+    const wf = medianOf(wfTest.map((p) => Math.abs(Math.log(variantPred(p, wfFit, v, snapshot.as_of) / p.mcap_usd!))));
+    return {
+      variant,
+      loo_miss: Math.round(medianOf(miss) * 100) / 100,
+      within_3x: Math.round((within.reduce((a, b) => a + b, 0) / Math.max(1, within.length)) * 100),
+      rank_rho: Math.round(spearman(px, py) * 100) / 100,
+      walk_forward: Math.round(wf * 100) / 100,
+    };
+  });
+  // The shipped model's out-of-fold residuals, no fitted scale: their 10th and 90th percentiles
+  // are the band. A launch is genuinely uncertain; the band says how uncertain, in the model's
+  // own units.
+  const residuals: number[] = [];
+  for (let k = 0; k < 5; k++) {
+    const test = folds[k]!;
+    for (const p of test) {
+      const v = impliedValue(p, snapshot.as_of, MODEL);
+      residuals.push(Math.log(v.implied / p.mcap_usd!));
+    }
+  }
+  const resSorted = [...residuals].sort((a, b) => a - b);
+  const bandLo = round3(Math.exp(quantileOf(resSorted, 0.1)));
+  const bandHi = round3(Math.exp(quantileOf(resSorted, 0.9)));
+  // The chart: the curve fitted on all traded tokens, its P25–P75 residual band, and both point sets.
+  const fit = fitVariant(traded);
+  const curveRes = traded.map((p) => Math.log(p.mcap_usd!) - (fit.a + fit.b * Math.log(p.tvl_usd))).sort((a, b) => a - b);
+  return {
+    traded: traded.length,
+    rows,
+    band_lo: bandLo,
+    band_hi: bandHi,
+    curve_a: round3(fit.a),
+    curve_b: round3(fit.b),
+    band_p25: Math.round(quantileOf(curveRes, 0.25) * 100) / 100,
+    band_p75: Math.round(quantileOf(curveRes, 0.75) * 100) / 100,
+    traded_points: traded.map((p) => [round3(Math.log10(p.tvl_usd)), round3(Math.log10(p.mcap_usd!))] as [number, number]),
+    pre_points: [],
+  };
+}
+
+/** A short dollar figure: $38M, $1.2M, $850K. */
+function fmtShort(n: number): string {
+  if (n >= 1e9) return `$${(n / 1e9).toFixed(1)}B`;
+  if (n >= 1e6) return `$${(n / 1e6).toFixed(0)}M`;
+  if (n >= 1e3) return `$${Math.round(n / 1e3)}K`;
+  return `$${Math.round(n)}`;
+}
+
+/**
+ * A row's farm verdict, from its P10 value and its seven-day growth. The rule is stated on the
+ * page: a launch has to be big even in the bad case, and growing, to be worth farming; a tiny
+ * P10 or a fast-shrinking TVL is a skip; everything else is marginal.
+ */
+export function verdictFor(implied: number, bandLo: number, growth: number | null): { verdict: 'worth' | 'marginal' | 'skip'; why: string } {
+  const p10 = implied * bandLo;
+  const g = growth ?? 0;
+  if (p10 >= 25_000_000 && g >= 0) return { verdict: 'worth', why: `P10 ${fmtShort(p10)} and growing — even the bad case pays.` };
+  if (p10 < 2_000_000) return { verdict: 'skip', why: `P10 ${fmtShort(p10)} — too small to cover the gas.` };
+  if (g < -20) return { verdict: 'skip', why: `TVL down ${Math.abs(g).toFixed(0)}% in a week — the protocol is shrinking.` };
+  return { verdict: 'marginal', why: `P10 ${fmtShort(p10)} — worth a look, not a priority.` };
 }
 
 /** A board row's compact form for data.js, with the farm plan generated in the page. */
@@ -465,6 +703,10 @@ export function radarRow(row: BoardRow): RadarRow {
     age_days: row.age_days,
     watchlist: row.watchlist,
     implied_value_usd: row.implied_value_usd,
+    band_lo_usd: row.band_lo_usd,
+    band_hi_usd: row.band_hi_usd,
+    verdict: row.verdict,
+    verdict_why: row.verdict_why,
     category_multiple: row.model.category_multiple,
     growth_multiplier: row.model.growth_multiplier,
     maturity_multiplier: row.model.maturity_multiplier,
@@ -474,9 +716,11 @@ export function radarRow(row: BoardRow): RadarRow {
 
 /** Everything the dashboard renders, from the snapshot. */
 export function buildRadar(snapshot: Snapshot, model: ModelConstants = MODEL): { board: BoardRow[]; radar: RadarData } {
-  const board = buildBoard(snapshot, model);
+  const validation = validateModel(snapshot);
+  const board = buildBoard(snapshot, model, validation);
   const live = liveRows(snapshot);
   const early = board.filter((r) => !r.watchlist).length;
+  validation.pre_points = board.map((r) => [round3(Math.log10(r.tvl_usd)), round3(Math.log10(r.implied_value_usd))] as [number, number]);
   const radar: RadarData = {
     as_of: snapshot.as_of,
     source: snapshot.source,
@@ -487,8 +731,10 @@ export function buildRadar(snapshot: Snapshot, model: ModelConstants = MODEL): {
     board_size: board.length,
     early_size: early,
     live_size: live.length,
+    validation,
     rows: board.map(radarRow),
     live,
+    hot: snapshot.protocols.map((p) => [p.name, p.chains, p.tvl_usd, p.change_7d] as [string, string[], number, number | null]),
   };
   return { board, radar };
 }
